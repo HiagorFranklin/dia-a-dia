@@ -38,3 +38,39 @@ export function currentStreak(days: string[], today: Date = new Date()): number 
   }
   return streak;
 }
+
+// "YYYY-MM-DD" → Date no fuso local (new Date("2026-10-18") seria meia-noite UTC!).
+export function parseDayKey(key: string): Date {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// A maior sequência de dias seguidos em todo o histórico.
+export function longestStreak(days: string[]): number {
+  const sorted = [...new Set(days)].sort(); // "YYYY-MM-DD" ordena certo como texto
+  let best = 0;
+  let run = 0;
+  let previous: string | null = null;
+  for (const day of sorted) {
+    const followsPrevious = previous !== null && toDayKey(addDays(parseDayKey(previous), 1)) === day;
+    run = followsPrevious ? run + 1 : 1;
+    best = Math.max(best, run);
+    previous = day;
+  }
+  return best;
+}
+
+// % dos dias do mês atual (até hoje) em que o hábito foi cumprido.
+// Se o hábito começou neste mês, conta a partir do início dele: a criação
+// ou o primeiro dia marcado, o que vier antes (o mapa permite marcar o passado).
+export function monthCompletion(days: string[], createdAt: string, today: Date = new Date()): number {
+  const firstOfMonth = toDayKey(new Date(today.getFullYear(), today.getMonth(), 1));
+  const firstDone = days.reduce((min, d) => (d < min ? d : min), createdAt);
+  const start = firstDone > firstOfMonth ? firstDone : firstOfMonth;
+  const end = toDayKey(today);
+  if (start > end) return 0;
+
+  const elapsed = Math.round((parseDayKey(end).getTime() - parseDayKey(start).getTime()) / 86_400_000) + 1;
+  const done = new Set(days.filter((d) => d >= start && d <= end)).size;
+  return Math.round((done / elapsed) * 100);
+}

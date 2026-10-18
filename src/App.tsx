@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
-import { currentStreak, toDayKey } from "./dates";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import { createBackup, parseBackup } from "./backup";
+import { currentStreak, longestStreak, monthCompletion, toDayKey } from "./dates";
 import { Heatmap } from "./Heatmap";
 import type { Completions, Habit } from "./types";
 import { useLocalStorage } from "./useLocalStorage";
@@ -33,6 +34,31 @@ export default function App() {
     const days = completions[id] ?? [];
     const next = days.includes(day) ? days.filter((d) => d !== day) : [...days, day];
     setCompletions({ ...completions, [id]: next });
+  }
+
+  function exportBackup() {
+    const json = JSON.stringify(createBackup(habits, completions), null, 2);
+    const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `habitos-backup-${today}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function importBackup(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // permite escolher o mesmo arquivo de novo
+    if (!file) return;
+    try {
+      const backup = parseBackup(await file.text());
+      const message = `Substituir seus dados atuais por ${backup.habits.length} hábito(s) do backup?`;
+      if (!confirm(message)) return;
+      setHabits(backup.habits);
+      setCompletions(backup.completions);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Não foi possível ler o backup.");
+    }
   }
 
   return (
@@ -69,6 +95,7 @@ export default function App() {
             const days = completions[habit.id] ?? [];
             const doneToday = days.includes(today);
             const streak = currentStreak(days);
+            const record = longestStreak(days);
             return (
               <li key={habit.id} className="habit" style={{ borderLeftColor: habit.color }}>
                 <div className="habit-row">
@@ -89,11 +116,29 @@ export default function App() {
                   </button>
                 </div>
                 <Heatmap days={days} color={habit.color} onToggle={(day) => toggleDay(habit.id, day)} />
+                <div className="stats">
+                  <span>
+                    🏆 Recorde: <strong>{record}</strong> {record === 1 ? "dia" : "dias"}
+                  </span>
+                  <span>
+                    📅 Este mês: <strong>{monthCompletion(days, habit.createdAt)}%</strong>
+                  </span>
+                </div>
               </li>
             );
           })}
         </ul>
       )}
+
+      <footer className="backup">
+        <button onClick={exportBackup} disabled={habits.length === 0}>
+          Exportar backup
+        </button>
+        <label>
+          Importar backup
+          <input type="file" accept="application/json,.json" onChange={importBackup} hidden />
+        </label>
+      </footer>
     </main>
   );
 }
