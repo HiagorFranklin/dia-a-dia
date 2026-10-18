@@ -13,6 +13,18 @@ export function addDays(date: Date, amount: number): Date {
   return copy;
 }
 
+// Os dias das últimas `weeks` semanas, do domingo mais antigo até hoje.
+// Começar sempre num domingo garante que cada coluna do mapa seja uma semana
+// e cada linha um dia da semana (domingo no topo).
+export function lastWeeks(weeks: number, today: Date = new Date()): Date[] {
+  const start = addDays(today, -(weeks - 1) * 7 - today.getDay());
+  const days: Date[] = [];
+  for (let d = start; toDayKey(d) <= toDayKey(today); d = addDays(d, 1)) {
+    days.push(d);
+  }
+  return days;
+}
+
 // Quantos dias seguidos o hábito foi cumprido, terminando hoje.
 // Se hoje ainda não foi marcado, a sequência de ontem continua valendo
 // (o dia não acabou), então começamos a contar a partir de ontem.

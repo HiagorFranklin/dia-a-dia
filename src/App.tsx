@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { currentStreak, toDayKey } from "./dates";
+import { Heatmap } from "./Heatmap";
 import type { Completions, Habit } from "./types";
 import { useLocalStorage } from "./useLocalStorage";
 
@@ -28,9 +29,9 @@ export default function App() {
     setCompletions(rest);
   }
 
-  function toggleToday(id: string) {
+  function toggleDay(id: string, day: string) {
     const days = completions[id] ?? [];
-    const next = days.includes(today) ? days.filter((d) => d !== today) : [...days, today];
+    const next = days.includes(day) ? days.filter((d) => d !== day) : [...days, day];
     setCompletions({ ...completions, [id]: next });
   }
 
@@ -70,21 +71,24 @@ export default function App() {
             const streak = currentStreak(days);
             return (
               <li key={habit.id} className="habit" style={{ borderLeftColor: habit.color }}>
-                <button
-                  className={`check ${doneToday ? "done" : ""}`}
-                  style={doneToday ? { background: habit.color, borderColor: habit.color } : undefined}
-                  onClick={() => toggleToday(habit.id)}
-                  aria-label={doneToday ? "Desmarcar hoje" : "Marcar hoje"}
-                >
-                  {doneToday ? "✓" : ""}
-                </button>
-                <span className="habit-name">{habit.name}</span>
-                <span className="streak" title="Dias seguidos">
-                  🔥 {streak}
-                </span>
-                <button className="remove" onClick={() => removeHabit(habit.id)} aria-label="Remover">
-                  ×
-                </button>
+                <div className="habit-row">
+                  <button
+                    className={`check ${doneToday ? "done" : ""}`}
+                    style={doneToday ? { background: habit.color, borderColor: habit.color } : undefined}
+                    onClick={() => toggleDay(habit.id, today)}
+                    aria-label={doneToday ? "Desmarcar hoje" : "Marcar hoje"}
+                  >
+                    {doneToday ? "✓" : ""}
+                  </button>
+                  <span className="habit-name">{habit.name}</span>
+                  <span className="streak" title="Dias seguidos">
+                    🔥 {streak}
+                  </span>
+                  <button className="remove" onClick={() => removeHabit(habit.id)} aria-label="Remover">
+                    ×
+                  </button>
+                </div>
+                <Heatmap days={days} color={habit.color} onToggle={(day) => toggleDay(habit.id, day)} />
               </li>
             );
           })}
