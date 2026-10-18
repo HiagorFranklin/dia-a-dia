@@ -2,7 +2,7 @@
 
 Dashboard pessoal de hábitos em React + TypeScript (Vite).
 
-**App:** publicado na Netlify (link a definir)
+**App:** https://hiagorfranklin.github.io/dia-a-dia/
 
 ```bash
 npm install
@@ -24,7 +24,6 @@ e funciona sem internet. Os dados ficam só no aparelho; use o backup para troca
 - [x] Passo 3 — marcar/desmarcar dias passados clicando no mapa
 - [x] Passo 4 — backup (exportar/importar JSON) e estatísticas: maior sequência, % de conclusão no mês
 - [x] Passo 5 — PWA: instalável e funcionando offline
-- [x] Passo 6a — CI: testes e build automáticos a cada push
-- [ ] Passo 6b — publicar na Netlify (repositório privado)
-- [ ] Passo 6c — usar no celular por 7 dias seguidos
+- [x] Passo 6a — CI: testes e build a cada push; publicação no GitHub Pages a cada push na `main`
+- [ ] Passo 6b — usar no celular por 7 dias seguidos
 - [ ] Passo 7 — trocar localStorage por banco (Drizzle) e sincronizar entre aparelhos

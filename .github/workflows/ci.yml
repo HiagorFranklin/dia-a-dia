@@ -1,14 +1,25 @@
-# Roda os testes e o build a cada push e pull request.
-# A hospedagem publica por conta própria; isto garante que nada quebrado chegue lá sem aviso.
-name: CI
+# Testes e build a cada push e pull request.
+# Na main, se tudo passar, publica no GitHub Pages.
+name: CI e publicação
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Um deploy por vez; um push novo cancela o que ainda está na fila.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,3 +30,18 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
