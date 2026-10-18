@@ -1,6 +1,6 @@
 {
-  "name": "Meus Hábitos",
-  "short_name": "Hábitos",
+  "name": "Dia a Dia",
+  "short_name": "Dia a Dia",
   "description": "Acompanhe seus hábitos diários com sequências e mapa de calor.",
   "lang": "pt-BR",
   "start_url": "./",

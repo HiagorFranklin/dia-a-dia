@@ -41,7 +41,7 @@ export default function App() {
     const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = `habitos-backup-${today}.json`;
+    link.download = `dia-a-dia-backup-${today}.json`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -63,7 +63,7 @@ export default function App() {
 
   return (
     <main className="container">
-      <h1>Meus Hábitos</h1>
+      <h1>Dia a Dia</h1>
 
       <form className="add-form" onSubmit={addHabit}>
         <input

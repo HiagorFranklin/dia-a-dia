@@ -37,7 +37,7 @@ export function parseBackup(text: string): Backup {
 
   const b = data as Backup;
   if (typeof b !== "object" || b === null || b.version !== 1) {
-    throw new Error("Este arquivo não é um backup do Meus Hábitos.");
+    throw new Error("Este arquivo não é um backup do Dia a Dia.");
   }
   if (!Array.isArray(b.habits) || !b.habits.every(isHabit)) {
     throw new Error("A lista de hábitos do backup está corrompida.");

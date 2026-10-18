@@ -1,6 +1,6 @@
 // Service worker: guarda o app no celular para abrir mesmo sem internet.
 // Troque a versão quando mudar esta lógica, para descartar o cache antigo.
-const CACHE = "habitos-v1";
+const CACHE = "dia-a-dia-v1";
 
 // Na instalação, baixa a página e todos os arquivos que ela referencia.
 // Os nomes dos arquivos do Vite mudam a cada build (index-AbC123.js),
