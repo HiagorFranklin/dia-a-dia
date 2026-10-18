@@ -1,0 +1,21 @@
+# Roda os testes e o build a cada push e pull request.
+# A hospedagem publica por conta própria; isto garante que nada quebrado chegue lá sem aviso.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
