@@ -28,6 +28,9 @@ body {
   max-width: 560px;
   margin: 0 auto;
   padding: 32px 16px;
+  /* Instalado no iPhone, o app ocupa a tela toda: afasta o conteúdo do entalhe. */
+  padding-top: max(32px, env(safe-area-inset-top));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
 }
 
 h1 {
